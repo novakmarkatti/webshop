@@ -1,0 +1,16 @@
+<div class="mt-4" th:fragment="addressInformation(currentAddress)">
+    <h3 class="mb-3" th:text="#{__${currentAddress}__}"></h3>
+    <input type="hidden" class="form-control" th:id="${currentAddress + 'Id'}" th:name="${currentAddress + 'Id'}" th:value="${user.__${currentAddress}__.id}">
+    <div th:each="field : ${addressFields}">
+        <div class="mb-2">
+            <label th:for="${currentAddress + #strings.capitalize(field)}" 
+                    th:text="#{__${field}__}"
+                    th:classappend="${field == 'zipCode' or field == 'city' or field == 'street' or field == 'houseNumber'} ? 'form-label required' : 'form-label'"></label>
+            <input class="form-control" 
+                th:id="${currentAddress + #strings.capitalize(field)}" 
+                th:value="${user.__${currentAddress}__.__${field}__}"
+                th:name="${currentAddress + #strings.capitalize(field)}"
+                th:required="${field == 'zipCode' or field == 'city' or field == 'street' or field == 'houseNumber'}">
+        </div>
+    </div>
+</div>

@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+    <head>
+        <header th:include="~{header :: head}"></header>
+        <script src="/js/util.js"></script>
+    </head>
+    <body>
+        <header th:include="~{header :: body}"></header>
+        <div class="container center-content">
+            <input type="hidden" class="form-control" id="userId" name="userId" th:value="${user.id}">
+
+            <form class="mt-4 mb-4" id="billingAndShippingForm" name="billingAndShippingForm">
+                <h2 th:text="#{billingAndShippingTitle}">Billing And Shipping</h2>
+        
+                <div th:replace="~{fragments/addressInformationFragment :: addressInformation('billingAddress')}"></div>
+        
+                <div th:replace="~{fragments/addressInformationFragment :: addressInformation('deliveryAddress')}"></div>
+                
+                <div class="d-flex justify-content-between">
+                    <button type="button" class="btn btn-primary mt-3" id="backToShoppingCart">
+                        <i class="fa-solid fa-chevron-left"></i> Back to Cart
+                    </button>
+                
+                    <button type="submit" class="btn btn-primary mt-3">
+                        Order Summary <i class="fa-solid fa-chevron-right"></i>
+                    </button>
+                </div>
+            </form>
+        </div>
+
+        <script>
+            $(document).ready(function() {
+                
+                $("#backToShoppingCart").click(function(e) {
+                    e.preventDefault();
+                    window.location.href = "/ShoppingCart";
+                });
+                
+                $("#billingAndShippingForm").submit(function(e) {
+                    e.preventDefault();
+                    var userData = getUserData();
+                    $.ajax({
+                        type: "PUT",
+                        url: "/updateUserAddresses",
+                        contentType: "application/json",
+                        data: JSON.stringify(userData),
+                        success: function(response) {
+                            window.location.href = "/OrderAndSummary";
+                        },
+                        error: function(xhr, status, error) {
+                            alert("Error: " + xhr.responseText);
+                        }
+                    });
+                });
+
+            });
+        </script>
+    </body>
+</html>

@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+    <head>
+        <header th:include="~{header :: head}"></header>
+        <script src="/js/util.js"></script>
+    </head>
+    <body>
+        <header th:include="~{header :: body}"></header>
+        <div class="container center-content">
+            <form id="userManagerForm" name="userManagerForm" class="mt-5 mb-5">
+                <div>
+                    <h3 th:text="#{generalInformation}">General Information</h3>
+                    <input type="hidden" class="form-control" id="userId" name="userId" th:value="${user.id}">
+                    <div class="mb-3">
+                        <label for="firstName" class="form-label required" th:text="#{firstName}">First Name</label>
+                        <input class="form-control" id="firstName" name="firstName" th:value="${user.firstName}" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="lastName" class="form-label required" th:text="#{lastName}">Last Name</label>
+                        <input class="form-control" id="lastName" name="lastName" th:value="${user.lastName}" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="username" class="form-label required" th:text="#{username}">Username</label>
+                        <input class="form-control" id="username" name="username" th:value="${user.username}" required>
+                    </div>
+                </div>
+
+                <div th:replace="~{fragments/addressInformationFragment :: addressInformation('billingAddress')}"></div>
+
+                <div th:replace="~{fragments/addressInformationFragment :: addressInformation('deliveryAddress')}"></div>
+
+                <div class="text-center mt-3">
+                    <button type="submit" class="btn btn-primary" th:text="#{save}">Save</button>
+                </div>
+            </form>
+        </div>
+
+        <script>
+            $(document).ready(function() {
+
+                const userManagerForm = document.getElementById("userManagerForm");
+                userManagerForm.addEventListener("submit", function(e) {
+                    e.preventDefault();
+
+                    const userData = getUserData();
+
+                    const jsonData = JSON.stringify(userData);
+                    const userId = $("#userId").val();
+                    const url = "/UserManager/" + userId;
+
+                    $.ajax({
+                        type: "PUT",
+                        url: url,
+                        contentType: "application/json",
+                        data: jsonData,
+                        success: function(response) {
+                            alert("User data updated successfully!");
+                            location.reload();
+                        },
+                        error: function(xhr, status, error) {
+                            console.error(xhr.responseText);
+                            alert("Failed to update user data");
+                        }
+                    });
+
+                });
+            });
+        </script>
+    </body>
+</html>

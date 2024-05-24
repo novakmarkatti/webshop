@@ -1,0 +1,15 @@
+version: '3.3'
+services:
+  db:
+    image: mysql:8.4.0
+    restart: always
+    environment:
+      - MYSQL_ROOT_PASSWORD=root
+    volumes:
+      - ./db_data:/var/lib/mysql:rw
+      - ./init.sql:/docker-entrypoint-initdb.d/init.sql:ro
+      - ./my.cnf:/etc/mysql/my.cnf
+    ports:
+      - 3306:3306
+    expose:
+      - 3306

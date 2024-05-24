@@ -1,0 +1,15 @@
+<div class="input-group mt-2 ml-2" th:fragment="setProductQuantity(quantity)">
+    <span class="input-group-prepend">
+        <button class="btn btn-outline-secondary minus-btn" type="button">
+            <i class="fa-solid fa-minus"></i>
+        </button>
+    </span>
+
+    <input type="text" class="form-control text-center quantity-input" th:value="${quantity}">
+
+    <span class="input-group-append">
+        <button class="btn btn-outline-secondary plus-btn" type="button">
+            <i class="fa-solid fa-plus"></i>
+        </button>
+    </span>
+</div>

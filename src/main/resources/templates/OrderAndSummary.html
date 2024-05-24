@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+    <head>
+        <header th:include="~{header :: head}"></header>
+    </head>
+    <body>
+        <header th:include="~{header :: body}"></header>
+        <div class="container center-content">
+            <input type="hidden" class="form-control" id="userId" name="userId" th:value="${user.id}">
+
+            <div class="mt-4 mb-4" id="orderAndSummaryView">
+                <h3 th:text="#{orderAndSummaryTitle}">Order And Summary</h3>
+            
+                <div class="card card-body">
+                    <div>
+                        <strong th:text="#{OASname}">Name:</strong>
+                        <span id="fullName" th:text="${user.firstName + ' ' + user.lastName}"></span>
+                    </div>
+            
+                    <div>
+                        <strong th:text="#{OASbillingAddress}">Billing Address:</strong>
+                        <span id="billingAddress" th:text="${user.billingAddress.zipCode + ' ' + user.billingAddress.city + ' '
+                            + user.billingAddress.street + ' ' + user.billingAddress.houseNumber  + ' ' + user.billingAddress.stairs
+                            + ' ' + user.billingAddress.flat + ' ' + user.billingAddress.door}"></span>
+                    </div>
+            
+                    <div>
+                        <strong th:text="#{OASdeliveryAddress}">Delivery Address:</strong>
+                        <span id="deliveryAddress" th:text="${user.deliveryAddress.zipCode + ' ' + user.deliveryAddress.city + ' '
+                            + user.deliveryAddress.street + ' ' + user.deliveryAddress.houseNumber + ' ' + user.deliveryAddress.stairs
+                            + ' ' + user.deliveryAddress.flat + ' ' + user.deliveryAddress.door}"></span>
+                    </div>
+                </div>
+            
+                <ul class="list-group">
+                    <th:block th:each="cartItem : ${cartItems}">
+                        <li class="list-group-item d-flex justify-content-between align-items-center">
+                            <span class="mr-1">
+                                <i class="fa-solid fa-tag"></i>
+                                <strong th:text="${cartItem.productName}"></strong>
+                            </span>
+                            <span>
+                                <i class="fa-solid fa-xmark"></i>
+                                <span th:text="${cartItem.quantity}"></span>
+                            </span>
+                            <span class="ml-auto">
+                                <i class="fa-solid fa-equals"></i>
+                                <i class="fa-solid fa-coins"></i>
+                                <span th:text="${cartItem.price}"></span>
+                            </span>
+                        </li>
+                    </th:block>
+                </ul>
+            
+                <div class="mt-4">
+                    <h5>Total: <i class="fa-solid fa-coins mr-1"></i><span th:text="${cart.total}"></span></h5>
+                </div>
+            
+                <div class="d-flex justify-content-between">
+                    <button class="btn btn-primary mt-3" id="backToBillingAndShipping">
+                        <i class="fa-solid fa-chevron-left"></i> Back to Billing and Shipping
+                    </button>
+                
+                    <button class="btn btn-primary mt-3" id="placeOrder">
+                        <i class="fa-solid fa-clipboard-list"></i> Order
+                    </button>
+                </div>
+            
+            </div>
+        </div>
+
+        <script>
+            $(document).ready(function() {
+
+                $("#backToBillingAndShipping").click(function() {
+                    window.location.href = "/BillingAndShipping";
+                });
+                
+                $("#placeOrder").click(function() {
+                    $.ajax({
+                        type: "POST",
+                        url: "/placeOrder",
+                        success: function(response) {
+                            location.href = "/";
+                        },
+                        error: function(xhr, status, error) {
+                            alert("Error: " + xhr.responseText);
+                        }
+                    });
+                });
+
+            });
+        </script>
+    </body>
+</html>

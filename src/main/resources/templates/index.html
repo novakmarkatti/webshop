@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+    <head>
+        <header th:include="~{header :: head}"></header>
+    </head>
+    <body>
+        <header th:include="~{header :: body}"></header>
+        <div class="center-content">
+            <div class="container mt-5 mb-3">
+
+                <div class="row">
+                    <div th:each="product : ${products}" class="col-md-3 mb-3">
+                        <div class="card d-flex flex-column h-100">
+                            
+                            <div class="card-body">
+                                <input type="hidden" class="productId" th:value="${product.id}">
+                                <div class="d-flex align-items-center">
+                                    <i class="fa-solid fa-tag fa-lg mr-2"></i>
+                                    <h5 class="card-title mb-0" th:text="${product.productName}"></h5>
+                                </div>
+
+                                <div class="d-flex align-items-center mt-2 ml-2">
+                                    <i class="fa-solid fa-coins mr-1"></i>
+                                    <p class="card-text" th:text="${product.price}"></p>
+                                </div>
+
+                                <div class="flex-grow-1"></div>
+
+                                <div th:replace="~{fragments/setProductQuantityFragment :: setProductQuantity(0)}"></div>
+                                
+                                <button class="btn btn-primary mt-2 ml-2 add-to-cart-btn" type="button">
+                                    <i class="fa-solid fa-cart-plus"></i> Add to Cart
+                                </button>
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+        <script>
+            $(document).ready(function() {
+
+                $(".minus-btn").on("click", function() {
+                    var input = $(this).parent().siblings("input");
+                    var value = parseInt(input.val());
+                    if (!isNaN(value) && Number.isInteger(value) && value > 0) {
+                        input.val(value - 1);
+                    }
+                });
+
+                $(".plus-btn").on("click", function() {
+                    var input = $(this).parent().siblings("input");
+                    var value = parseInt(input.val());
+                    if (!isNaN(value) && Number.isInteger(value)) {
+                        input.val(value + 1);
+                    }
+                });
+
+                $(".add-to-cart-btn").on("click", function() {
+                    var input = $(this).closest(".card-body").find(".quantity-input");
+                    var value = parseInt(input.val());
+                    if (!isNaN(value) && Number.isInteger(value) && value > 0) {
+                        var productId = $(this).closest(".card-body").find(".productId").val();
+                        const data = { 
+                            id: productId,
+                            quantity: value
+                        };
+
+                        $.ajax({
+                            type: "POST",
+                            url: "/addProductToCart",
+                            contentType: "application/json",
+                            data: JSON.stringify(data),
+                            success: function(response) {
+                                var currentCount = parseInt($("#cartItemCount").text());
+                                $("#cartItemCount").text(currentCount + value);
+                            },
+                            error: function(xhr, status, error) {
+                                alert("Error: " + xhr.responseText);
+                            }
+                        });
+                    } else {
+                        alert("Wrong input! " + input.val());
+                    }
+                });
+
+            });
+        </script>  
+    </body>
+</html>

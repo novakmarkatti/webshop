@@ -1,0 +1,92 @@
+CREATE DATABASE CIB;
+
+USE CIB;
+
+CREATE TABLE ADDRESS (
+    ID int NOT NULL AUTO_INCREMENT PRIMARY KEY,
+    ZIP_CODE varchar(4) NOT NULL,
+    CITY varchar(50) NOT NULL,
+    STREET varchar(100) NOT NULL,
+    HOUSE_NUMBER int NOT NULL,
+    STAIRS varchar (50),
+    FLAT varchar(50),
+    DOOR varchar (50)
+);
+
+CREATE TABLE USER (
+    ID int NOT NULL AUTO_INCREMENT PRIMARY KEY,
+    LAST_NAME varchar(100) NOT NULL,
+    FIRST_NAME varchar(100) NOT NULL,
+    USERNAME varchar(50) NOT NULL,
+    BILLING_ADDRESS int,
+    DELIVERY_ADDRESS int,
+    FOREIGN KEY (BILLING_ADDRESS) REFERENCES ADDRESS(ID),
+    FOREIGN KEY (DELIVERY_ADDRESS) REFERENCES ADDRESS(ID)
+);
+
+
+CREATE TABLE PRODUCT (
+    ID int NOT NULL AUTO_INCREMENT PRIMARY KEY,
+    PRODUCT_NAME varchar(100) NOT NULL,
+    CATEGORY varchar(20),
+    QUANTITY int NOT NULL,
+    PRICE int
+);
+
+CREATE TABLE CART (
+    ID int NOT NULL AUTO_INCREMENT PRIMARY KEY,
+    USER_ID int NOT NULL,
+    TOTAL bigint,
+    CREATED_AT date,
+    ORDERED bit
+);
+
+CREATE TABLE CART_ITEM (
+    ID int NOT NULL AUTO_INCREMENT PRIMARY KEY,
+    PRODUCT_NAME varchar(100) NOT NULL,
+    CATEGORY varchar(20),
+    QUANTITY int NOT NULL,
+    PRICE int,
+    CART_ID int,
+    FOREIGN KEY (CART_ID) REFERENCES CART(ID)
+);
+
+
+insert into ADDRESS(ZIP_CODE, CITY, STREET, HOUSE_NUMBER) 
+values ('1056', 'Budapest', 'Petőfi S. u', 21);
+
+insert into ADDRESS(ZIP_CODE, CITY, STREET, HOUSE_NUMBER) 
+values ('1066', 'Budapest', 'Bocskai. u', 1);
+
+
+insert into USER(LAST_NAME, FIRST_NAME, USERNAME, BILLING_ADDRESS, DELIVERY_ADDRESS) 
+VALUES ('Test', 'User', 'test', 1,2);
+
+
+insert into PRODUCT(PRODUCT_NAME, CATEGORY, QUANTITY, PRICE)
+VALUES ('Saeco Incanto', 'Caffee maker', 10, 210000);
+
+insert into PRODUCT(PRODUCT_NAME, CATEGORY, QUANTITY, PRICE)
+VALUES ('Krups Nespresso Caffee maker', 'Caffee maker', 15, 45000);
+
+insert into PRODUCT(PRODUCT_NAME, CATEGORY, QUANTITY, PRICE)
+VALUES ('Philips Senseo', 'Caffee maker', 5, 35000);
+
+insert into PRODUCT(PRODUCT_NAME, CATEGORY, QUANTITY, PRICE)
+VALUES ('Dallmayer', 'Caffee Bean', 50, 5000);
+
+insert into PRODUCT(PRODUCT_NAME, CATEGORY, QUANTITY, PRICE)
+VALUES ('Segafredo', 'Caffee Bean', 70, 4000);
+
+insert into PRODUCT(PRODUCT_NAME, CATEGORY, QUANTITY, PRICE)
+VALUES ('Tschibo Barista', 'Caffee Bean', 40, 5500);
+
+insert into PRODUCT(PRODUCT_NAME, CATEGORY, QUANTITY, PRICE)
+VALUES ('Philips Senseo Espresso', 'Caffee Pod', 50, 2500);
+
+insert into PRODUCT(PRODUCT_NAME, CATEGORY, QUANTITY, PRICE)
+VALUES ('Nespresso Espresso', 'Caffee pod', 150, 2000);
+
+insert into PRODUCT(PRODUCT_NAME, CATEGORY, QUANTITY, PRICE)
+VALUES ('Nespresso Caramel', 'Caffee pod', 250, 3000);
+

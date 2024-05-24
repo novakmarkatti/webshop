@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+    <head>
+        <header th:include="~{header :: head}"></header>
+    </head>
+    <body>
+        <header th:include="~{header :: body}"></header>
+        <div class="container center-content">
+            <input type="hidden" class="form-control" id="userId" name="userId" th:value="${user.id}">
+            <div class="mt-4 mb-4">
+                <h2 th:text="#{shoppingCartTitle}">Cart</h2>
+                <ul class="list-group">
+                    <th:block th:each="cartItem : ${cartItems}">
+                        <li class="list-group-item">
+                            <div class="d-flex justify-content-between  align-items-center flex-grow-1">
+                                <input type="hidden" id="id" name="id" th:value="${cartItem.id}">
+                                <span class="mr-5">
+                                    <strong th:text="${cartItem.productName}"></strong>
+                                </span>
+            
+                                <div class="set-product-quantity-div">
+                                    <span>
+                                        <i class="fa-solid fa-equals mr-2"></i>
+                                        <i class="fa-solid fa-coins"></i>
+                                        <span th:text="${cartItem.price}"></span>
+                                    </span>
+            
+                                    <div th:replace="~{fragments/setProductQuantityFragment :: setProductQuantity(__${cartItem.quantity}__)}"></div>
+            
+                                    <button class="btn btn-secondary delete-btn mt-2 ml-2" type="button">
+                                        <i class="fa-solid fa-trash-can"></i> Delete
+                                    </button>
+                                </div>
+                            </div>
+                        </li>
+                    </th:block>
+                </ul>
+            
+                <div class="mt-4">
+                    <h5>Total: <i class="fa-solid fa-coins mr-1"></i><span th:text="${cart.total}"></span></h5>
+                </div>
+            
+                <div class="d-flex justify-content-end" th:if="${cart.total > 0}">
+                    <button class="btn btn-primary mt-3" id="toBillingAndShipping">Billing and Shipping
+                        <i class="fa-solid fa-chevron-right"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <script>
+            $(document).ready(function() {
+
+                $("#toBillingAndShipping").click(function() {
+                    window.location.href = "/BillingAndShipping";
+                });
+
+                $(".minus-btn").on("click", function() {
+                    var input = $(this).parent().siblings("input");
+                    var value = parseInt(input.val());
+                    if (!isNaN(value) && Number.isInteger(value) && value > 1) {
+                        input.val(value - 1);
+                        updateCartItem(input);
+                    }
+                });
+
+                $(".plus-btn").on("click", function() {
+                    var input = $(this).parent().siblings("input");
+                    var value = parseInt(input.val());
+                    if (!isNaN(value) && Number.isInteger(value)) {
+                        input.val(value + 1);
+                        updateCartItem(input);
+                    }
+                });
+
+                function updateCartItem(input) {
+                    var cartItemId = input.closest(".list-group-item").find("#id").val();
+                    var quantity = parseInt(input.val());
+                    const data = { 
+                        id: cartItemId,
+                        quantity: quantity
+                    };
+
+                    $.ajax({
+                        type: "PUT",
+                        url: "/updateCartItem",
+                        contentType: "application/json",
+                        data: JSON.stringify(data),
+                        success: function(response) {
+                            location.reload();
+                        },
+                        error: function(xhr, status, error) {
+                            alert("Error: " + xhr.responseText);
+                        }
+                    });
+                }
+
+                $(".delete-btn").on("click", function() {
+                    var cartItemId = $(this).closest(".list-group-item").find("#id").val();
+                    $.ajax({
+                        type: "DELETE",
+                        url: "/deleteCartItem/" + cartItemId,
+                        success: function(response) {
+                            location.reload();
+                        },
+                        error: function(xhr, status, error) {
+                            alert("Error: " + xhr.responseText);
+                        }
+                    });
+                });
+
+            });
+        </script>
+    </body>
+</html>
